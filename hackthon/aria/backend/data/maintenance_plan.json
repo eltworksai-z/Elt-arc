@@ -1,0 +1,60 @@
+{
+  "simulated": true,
+  "source": "Simulated CMMS export for PAL-01. Offsets are days relative to now.",
+  "tasks": [
+    {
+      "id": "PM-PAL01-014",
+      "component": "gripper.jaws",
+      "task": "Replace gripper finger set and check B21 distance (procedure 4.1)",
+      "interval": "every 250,000 cycles",
+      "last_done_offset_days": 0,
+      "next_due_offset_days": 74,
+      "counter": {"name": "gripper cycles since finger change", "value": 1840, "limit": 250000}
+    },
+    {
+      "id": "PM-PAL01-021",
+      "component": "sensor.pick_photo_eye_b12",
+      "task": "Clean B12 lens and reflector, confirm margin above 120 % (procedure 4.3)",
+      "interval": "weekly",
+      "last_done_offset_days": -9,
+      "next_due_offset_days": -2,
+      "counter": null
+    },
+    {
+      "id": "PM-PAL01-030",
+      "component": "pneumatics.filter_regulator",
+      "task": "Drain and inspect cell filter-regulator, replace element if differential pressure high",
+      "interval": "monthly",
+      "last_done_offset_days": -24,
+      "next_due_offset_days": 6,
+      "counter": null
+    },
+    {
+      "id": "PM-PAL01-042",
+      "component": "safety.light_curtain_lc2",
+      "task": "Light curtain LC2 functional test with test rod and K20 reset check",
+      "interval": "quarterly",
+      "last_done_offset_days": -71,
+      "next_due_offset_days": 20,
+      "counter": null
+    },
+    {
+      "id": "PM-PAL01-055",
+      "component": "robot.arm",
+      "task": "Robot gearbox oil level and cable dress-pack inspection",
+      "interval": "every 2,000 operating hours",
+      "last_done_offset_days": -130,
+      "next_due_offset_days": 41,
+      "counter": {"name": "robot operating hours since service", "value": 1512, "limit": 2000}
+    },
+    {
+      "id": "PM-PAL01-060",
+      "component": "conveyor.infeed_drive",
+      "task": "Inspect infeed belt tension and guide rails for case jams",
+      "interval": "monthly",
+      "last_done_offset_days": -33,
+      "next_due_offset_days": -3,
+      "counter": null
+    }
+  ]
+}

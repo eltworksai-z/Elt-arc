@@ -1,0 +1,12 @@
+.env
+.env.local
+__pycache__/
+.venv/
+.pytest_cache/
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+backend/data/aria.db*
+backend/data/reports/
+backend/data/eval_runs/

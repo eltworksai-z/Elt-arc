@@ -1,0 +1,492 @@
+{
+  "machine": {
+    "id": "PAL-01",
+    "name": "End-of-line robotic palletizing cell 1",
+    "site": "Packaging Line 3",
+    "simulated": true
+  },
+  "default_scenario": "normal_operation",
+  "scenarios": [
+    {
+      "id": "normal_operation",
+      "kind": "normal",
+      "title": "Running normally",
+      "summary": "Cell running in AUTO, stacking layer 4 of the current pallet.",
+      "operator_symptom": "The cell is running.",
+      "fault_family": null,
+      "ground_truth": null,
+      "signals": {
+        "cell.mode": "AUTO",
+        "sequence.step": "10_WAIT_CASE",
+        "sequence.step_elapsed_s": 2,
+        "robot.at_pick": false,
+        "robot.at_home": true,
+        "robot.program_running": true,
+        "conv.infeed.running": true,
+        "sensor.case_present_pick": true,
+        "grip.close_cmd": false,
+        "grip.open_fb": true,
+        "grip.closed_fb": false,
+        "air.pressure_switch_ok": true,
+        "safety.estop_ok": true,
+        "safety.light_curtain_ok": true,
+        "safety.relay_ok": true,
+        "pallet.in_position": true,
+        "pallet.layer_count": 4
+      },
+      "hidden": {
+        "grip.valve_coil_current_ma": 0,
+        "air.manifold_pressure_bar": 6.2,
+        "grip.closed_sensor_distance_mm": 12.0,
+        "grip.closed_sensor_comm": "ok",
+        "grip.jaw_motion": "normal",
+        "conv.motor_load_pct": 43,
+        "upstream.cases_last_5min": 7,
+        "tracking.case_state": "at_pick",
+        "pick_eye.margin_pct": 165,
+        "lc2.ossd": "on",
+        "lc2.beams": "clear",
+        "safety.relay_latched": false
+      },
+      "alarm_log": [
+        {
+          "code": "W-110",
+          "message": "Stretch wrapper film roll low",
+          "severity": "warning",
+          "offset_s": -5400,
+          "active": false
+        },
+        {
+          "code": "I-001",
+          "message": "Cell started in AUTO by operator",
+          "severity": "info",
+          "offset_s": -3300,
+          "active": false
+        }
+      ],
+      "signal_history": [],
+      "test_permissions": {
+        "T_GRIP_MANUAL_CYCLE": {
+          "permitted": false,
+          "reason": "Cell is in AUTO production; maintenance-mode tests are not permitted while running."
+        }
+      },
+      "expected": null
+    },
+    {
+      "id": "gripper_feedback_missing",
+      "kind": "fault",
+      "title": "Gripper close not confirmed",
+      "summary": "Cell stopped at step 30 GRIP_CLOSE with a gripper close timeout.",
+      "operator_symptom": "The palletizer has stopped and the robot is sitting over the pick position.",
+      "fault_family": "gripper_close",
+      "ground_truth": {
+        "hypothesis_id": "H_GRIP_SENSOR_MISALIGNED",
+        "explanation": "Closed-position proximity sensor was knocked out of position during this morning's finger replacement. Jaws close fully but the target sits beyond the sensor switching distance."
+      },
+      "signals": {
+        "cell.mode": "FAULT",
+        "sequence.step": "30_GRIP_CLOSE",
+        "sequence.step_elapsed_s": 412,
+        "robot.at_pick": true,
+        "robot.at_home": false,
+        "robot.program_running": false,
+        "conv.infeed.running": false,
+        "sensor.case_present_pick": true,
+        "grip.close_cmd": true,
+        "grip.open_fb": false,
+        "grip.closed_fb": false,
+        "air.pressure_switch_ok": true,
+        "safety.estop_ok": true,
+        "safety.light_curtain_ok": true,
+        "safety.relay_ok": true,
+        "pallet.in_position": true,
+        "pallet.layer_count": 3
+      },
+      "hidden": {
+        "grip.valve_coil_current_ma": 212,
+        "air.manifold_pressure_bar": 6.1,
+        "grip.closed_sensor_distance_mm": 2.9,
+        "grip.closed_sensor_comm": "ok",
+        "grip.jaw_motion": "full_stroke_no_closed_fb",
+        "conv.motor_load_pct": 0,
+        "upstream.cases_last_5min": 7,
+        "tracking.case_state": "at_pick",
+        "pick_eye.margin_pct": 160,
+        "lc2.ossd": "on",
+        "lc2.beams": "clear",
+        "safety.relay_latched": false
+      },
+      "alarm_log": [
+        {
+          "code": "W-110",
+          "message": "Stretch wrapper film roll low",
+          "severity": "warning",
+          "offset_s": -5400,
+          "active": false
+        },
+        {
+          "code": "I-001",
+          "message": "Cell started in AUTO by operator",
+          "severity": "info",
+          "offset_s": -3300,
+          "active": false
+        },
+        {
+          "code": "A-301",
+          "message": "Gripper close not confirmed within 1.5 s at step 30 GRIP_CLOSE",
+          "severity": "alarm",
+          "offset_s": -412,
+          "active": true
+        }
+      ],
+      "signal_history": [
+        {
+          "offset_s": -414,
+          "signal": "sequence.step",
+          "value": "30_GRIP_CLOSE"
+        },
+        {
+          "offset_s": -414,
+          "signal": "grip.close_cmd",
+          "value": true
+        },
+        {
+          "offset_s": -413.7,
+          "signal": "grip.open_fb",
+          "value": false
+        },
+        {
+          "offset_s": -412.5,
+          "signal": "cell.mode",
+          "value": "FAULT"
+        }
+      ],
+      "test_permissions": {
+        "T_GRIP_MANUAL_CYCLE": {
+          "permitted": false,
+          "reason": "Robot is not at home position; moving the gripper over a case at the pick position requires an authorized technician."
+        }
+      },
+      "expected": {
+        "stop_reason": "sufficient_evidence",
+        "recommended_action_keywords": [
+          "sensor",
+          "align",
+          "authorized"
+        ],
+        "max_reasonable_tests": 3
+      }
+    },
+    {
+      "id": "case_missing_photoeye",
+      "title": "Case not detected at pick",
+      "summary": "Cell waiting at step 10 WAIT_CASE with a case-at-pick timeout while the infeed keeps running.",
+      "operator_symptom": "The palletizer stopped picking. The infeed conveyor looks like it is moving.",
+      "fault_family": "case_missing",
+      "ground_truth": {
+        "hypothesis_id": "H_PICK_EYE_CONTAMINATED",
+        "explanation": "Cardboard dust on the pick-position photo-eye lens reduced the received signal below the switching threshold. Cases arrive but are not detected."
+      },
+      "signals": {
+        "cell.mode": "FAULT",
+        "sequence.step": "10_WAIT_CASE",
+        "sequence.step_elapsed_s": 96,
+        "robot.at_pick": false,
+        "robot.at_home": true,
+        "robot.program_running": false,
+        "conv.infeed.running": true,
+        "sensor.case_present_pick": false,
+        "grip.close_cmd": false,
+        "grip.open_fb": true,
+        "grip.closed_fb": false,
+        "air.pressure_switch_ok": true,
+        "safety.estop_ok": true,
+        "safety.light_curtain_ok": true,
+        "safety.relay_ok": true,
+        "pallet.in_position": true,
+        "pallet.layer_count": 5
+      },
+      "hidden": {
+        "grip.valve_coil_current_ma": 0,
+        "air.manifold_pressure_bar": 6.2,
+        "grip.closed_sensor_distance_mm": 12.0,
+        "grip.closed_sensor_comm": "ok",
+        "grip.jaw_motion": "normal",
+        "conv.motor_load_pct": 41,
+        "upstream.cases_last_5min": 6,
+        "tracking.case_state": "overdue_at_pick",
+        "pick_eye.margin_pct": 22,
+        "lc2.ossd": "on",
+        "lc2.beams": "clear",
+        "safety.relay_latched": false
+      },
+      "alarm_log": [
+        {
+          "code": "I-001",
+          "message": "Cell started in AUTO by operator",
+          "severity": "info",
+          "offset_s": -7100,
+          "active": false
+        },
+        {
+          "code": "W-205",
+          "message": "Case-at-pick signal flickered during detection (3 events in 10 min)",
+          "severity": "warning",
+          "offset_s": -1500,
+          "active": false
+        },
+        {
+          "code": "A-210",
+          "message": "Case not detected at pick position within 20 s at step 10 WAIT_CASE",
+          "severity": "alarm",
+          "offset_s": -76,
+          "active": true
+        }
+      ],
+      "signal_history": [
+        {
+          "offset_s": -1500,
+          "signal": "sensor.case_present_pick",
+          "value": "flicker"
+        },
+        {
+          "offset_s": -96,
+          "signal": "sequence.step",
+          "value": "10_WAIT_CASE"
+        },
+        {
+          "offset_s": -76,
+          "signal": "cell.mode",
+          "value": "FAULT"
+        }
+      ],
+      "test_permissions": {},
+      "expected": {
+        "stop_reason": "sufficient_evidence",
+        "recommended_action_keywords": [
+          "photo-eye",
+          "clean",
+          "lens"
+        ],
+        "max_reasonable_tests": 3
+      },
+      "kind": "fault"
+    },
+    {
+      "id": "light_curtain_interlock",
+      "title": "Place blocked by safety interlock",
+      "summary": "Sequence holding at step 40 PLACE because the pallet-exit light curtain permissive is false.",
+      "operator_symptom": "The robot is holding a case and will not place it on the pallet.",
+      "fault_family": "place_permissive",
+      "ground_truth": {
+        "hypothesis_id": "H_LC_OBSTRUCTED",
+        "explanation": "A loose tail of stretch film is hanging into beams 7-9 of light curtain LC2 at the pallet exit."
+      },
+      "signals": {
+        "cell.mode": "HOLD",
+        "sequence.step": "40_PLACE",
+        "sequence.step_elapsed_s": 188,
+        "robot.at_pick": false,
+        "robot.at_home": false,
+        "robot.program_running": true,
+        "conv.infeed.running": false,
+        "sensor.case_present_pick": false,
+        "grip.close_cmd": true,
+        "grip.open_fb": false,
+        "grip.closed_fb": true,
+        "air.pressure_switch_ok": true,
+        "safety.estop_ok": true,
+        "safety.light_curtain_ok": false,
+        "safety.relay_ok": false,
+        "pallet.in_position": true,
+        "pallet.layer_count": 7
+      },
+      "hidden": {
+        "grip.valve_coil_current_ma": 210,
+        "air.manifold_pressure_bar": 6.0,
+        "grip.closed_sensor_distance_mm": 1.2,
+        "grip.closed_sensor_comm": "ok",
+        "grip.jaw_motion": "normal",
+        "conv.motor_load_pct": 0,
+        "upstream.cases_last_5min": 5,
+        "tracking.case_state": "in_gripper",
+        "pick_eye.margin_pct": 170,
+        "lc2.ossd": "off",
+        "lc2.beams": "partial_7_9",
+        "safety.relay_latched": false
+      },
+      "alarm_log": [
+        {
+          "code": "I-001",
+          "message": "Cell started in AUTO by operator",
+          "severity": "info",
+          "offset_s": -9800,
+          "active": false
+        },
+        {
+          "code": "W-110",
+          "message": "Stretch wrapper film roll low",
+          "severity": "warning",
+          "offset_s": -2400,
+          "active": false
+        },
+        {
+          "code": "S-120",
+          "message": "Safety light curtain LC2 (pallet exit) interrupted",
+          "severity": "safety",
+          "offset_s": -190,
+          "active": true
+        },
+        {
+          "code": "W-450",
+          "message": "Sequence waiting > 30 s at step 40 PLACE: place permissive missing",
+          "severity": "warning",
+          "offset_s": -158,
+          "active": true
+        }
+      ],
+      "signal_history": [
+        {
+          "offset_s": -190,
+          "signal": "safety.light_curtain_ok",
+          "value": false
+        },
+        {
+          "offset_s": -190,
+          "signal": "safety.relay_ok",
+          "value": false
+        },
+        {
+          "offset_s": -188,
+          "signal": "sequence.step",
+          "value": "40_PLACE"
+        }
+      ],
+      "test_permissions": {},
+      "expected": {
+        "stop_reason": "sufficient_evidence",
+        "recommended_action_keywords": [
+          "inspect",
+          "obstruction",
+          "light curtain",
+          "reset"
+        ],
+        "max_reasonable_tests": 2
+      },
+      "kind": "fault"
+    },
+    {
+      "id": "gripper_low_air",
+      "title": "Gripper close slow (air supply)",
+      "summary": "Cell stopped at step 30 GRIP_CLOSE with a gripper close timeout; closed feedback arrived late.",
+      "operator_symptom": "The palletizer stopped with a gripper alarm again. Maintenance was working on the plant compressor today.",
+      "fault_family": "gripper_close",
+      "ground_truth": {
+        "hypothesis_id": "H_AIR_PRESSURE_LOW",
+        "explanation": "Plant air header dropped to 4.4 bar after compressor maintenance. The gripper still closes but too slowly to confirm within the 1.5 s window."
+      },
+      "signals": {
+        "cell.mode": "FAULT",
+        "sequence.step": "30_GRIP_CLOSE",
+        "sequence.step_elapsed_s": 233,
+        "robot.at_pick": true,
+        "robot.at_home": false,
+        "robot.program_running": false,
+        "conv.infeed.running": false,
+        "sensor.case_present_pick": true,
+        "grip.close_cmd": true,
+        "grip.open_fb": false,
+        "grip.closed_fb": true,
+        "air.pressure_switch_ok": true,
+        "safety.estop_ok": true,
+        "safety.light_curtain_ok": true,
+        "safety.relay_ok": true,
+        "pallet.in_position": true,
+        "pallet.layer_count": 2
+      },
+      "hidden": {
+        "grip.valve_coil_current_ma": 208,
+        "air.manifold_pressure_bar": 4.2,
+        "grip.closed_sensor_distance_mm": 1.4,
+        "grip.closed_sensor_comm": "ok",
+        "grip.jaw_motion": "slow_close",
+        "conv.motor_load_pct": 0,
+        "upstream.cases_last_5min": 6,
+        "tracking.case_state": "at_pick",
+        "pick_eye.margin_pct": 150,
+        "lc2.ossd": "on",
+        "lc2.beams": "clear",
+        "safety.relay_latched": false
+      },
+      "alarm_log": [
+        {
+          "code": "I-001",
+          "message": "Cell started in AUTO by operator",
+          "severity": "info",
+          "offset_s": -2600,
+          "active": false
+        },
+        {
+          "code": "A-301",
+          "message": "Gripper close not confirmed within 1.5 s at step 30 GRIP_CLOSE",
+          "severity": "alarm",
+          "offset_s": -1900,
+          "active": false
+        },
+        {
+          "code": "I-002",
+          "message": "Alarm A-301 acknowledged and cell restarted by operator",
+          "severity": "info",
+          "offset_s": -1750,
+          "active": false
+        },
+        {
+          "code": "A-301",
+          "message": "Gripper close not confirmed within 1.5 s at step 30 GRIP_CLOSE",
+          "severity": "alarm",
+          "offset_s": -233,
+          "active": true
+        }
+      ],
+      "signal_history": [
+        {
+          "offset_s": -235,
+          "signal": "grip.close_cmd",
+          "value": true
+        },
+        {
+          "offset_s": -234.4,
+          "signal": "grip.open_fb",
+          "value": false
+        },
+        {
+          "offset_s": -233.5,
+          "signal": "cell.mode",
+          "value": "FAULT"
+        },
+        {
+          "offset_s": -232.6,
+          "signal": "grip.closed_fb",
+          "value": true
+        }
+      ],
+      "test_permissions": {
+        "T_GRIP_MANUAL_CYCLE": {
+          "permitted": false,
+          "reason": "Robot is not at home position; moving the gripper over a case at the pick position requires an authorized technician."
+        }
+      },
+      "expected": {
+        "stop_reason": "sufficient_evidence",
+        "recommended_action_keywords": [
+          "air",
+          "pressure",
+          "supply"
+        ],
+        "max_reasonable_tests": 3
+      },
+      "kind": "fault"
+    }
+  ]
+}

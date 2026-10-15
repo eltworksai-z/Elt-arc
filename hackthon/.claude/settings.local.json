@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "PowerShell(pip *)",
+      "WebFetch(domain:developers.openai.com)",
+      "Skill(update-config)",
+      "Edit",
+      "Write",
+      "Read",
+      "Glob",
+      "Grep",
+      "PowerShell",
+      "Bash",
+      "WebFetch",
+      "WebSearch"
+    ]
+  }
+}

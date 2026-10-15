@@ -1,0 +1,290 @@
+{
+  "families": {
+    "gripper_close": {
+      "alarm_codes": [
+        "A-301"
+      ],
+      "description": "Gripper close command issued but closed-position feedback not confirmed in time.",
+      "hypotheses": {
+        "H_GRIP_SENSOR_MISALIGNED": {
+          "label": "Closed-position sensor misaligned or out of range",
+          "component": "gripper.closed_sensor",
+          "predictions": {
+            "T_GRIP_IO_CHECK": "coil_energized",
+            "T_AIR_PRESSURE": "pressure_normal",
+            "T_GRIP_SENSOR_DIAG": "target_beyond_switch_point",
+            "T_GRIP_MANUAL_CYCLE": "no_closed_feedback"
+          }
+        },
+        "H_AIR_PRESSURE_LOW": {
+          "label": "Gripper air supply pressure too low (slow or weak close)",
+          "component": "pneumatics.air_supply",
+          "predictions": {
+            "T_GRIP_IO_CHECK": "coil_energized",
+            "T_AIR_PRESSURE": "pressure_low",
+            "T_GRIP_SENSOR_DIAG": "target_in_range",
+            "T_GRIP_MANUAL_CYCLE": "closes_slow"
+          }
+        },
+        "H_GRIP_VALVE_FAULT": {
+          "label": "Gripper solenoid valve or output not switching",
+          "component": "gripper.valve_y4",
+          "predictions": {
+            "T_GRIP_IO_CHECK": "coil_not_energized",
+            "T_AIR_PRESSURE": "pressure_normal",
+            "T_GRIP_SENSOR_DIAG": "target_absent",
+            "T_GRIP_MANUAL_CYCLE": "no_motion"
+          }
+        },
+        "H_GRIP_MECH_JAM": {
+          "label": "Gripper jaws mechanically obstructed mid-stroke",
+          "component": "gripper.jaws",
+          "predictions": {
+            "T_GRIP_IO_CHECK": "coil_energized",
+            "T_AIR_PRESSURE": "pressure_normal",
+            "T_GRIP_SENSOR_DIAG": "target_absent",
+            "T_GRIP_MANUAL_CYCLE": "no_closed_feedback"
+          }
+        },
+        "H_GRIP_SENSOR_CABLE": {
+          "label": "Closed-position sensor cable or connector fault",
+          "component": "gripper.closed_sensor_cable",
+          "predictions": {
+            "T_GRIP_IO_CHECK": "coil_energized",
+            "T_AIR_PRESSURE": "pressure_normal",
+            "T_GRIP_SENSOR_DIAG": "no_communication",
+            "T_GRIP_MANUAL_CYCLE": "no_closed_feedback"
+          }
+        }
+      }
+    },
+    "case_missing": {
+      "alarm_codes": [
+        "A-210"
+      ],
+      "description": "Sequence waiting for a case at the pick position that was not detected.",
+      "hypotheses": {
+        "H_UPSTREAM_STARVED": {
+          "label": "No cases arriving from the upstream line (cell starved)",
+          "component": "line.upstream",
+          "predictions": {
+            "T_CONVEYOR_DRIVE": "running_normal_load",
+            "T_UPSTREAM_FLOW": "no_cases",
+            "T_CASE_TRACKING": "no_case_in_transit",
+            "T_PICK_EYE_DIAG": "signal_ok"
+          }
+        },
+        "H_PICK_EYE_CONTAMINATED": {
+          "label": "Pick-position photo-eye contaminated or misaligned",
+          "component": "sensor.pick_photo_eye_b12",
+          "predictions": {
+            "T_CONVEYOR_DRIVE": "running_normal_load",
+            "T_UPSTREAM_FLOW": "cases_arriving",
+            "T_CASE_TRACKING": "case_overdue_at_pick",
+            "T_PICK_EYE_DIAG": "signal_low"
+          }
+        },
+        "H_CONVEYOR_DRIVE_FAULT": {
+          "label": "Infeed conveyor drive stopped or faulted",
+          "component": "conveyor.infeed_drive",
+          "predictions": {
+            "T_CONVEYOR_DRIVE": "not_running",
+            "T_UPSTREAM_FLOW": "cases_arriving",
+            "T_CASE_TRACKING": "case_overdue_at_pick",
+            "T_PICK_EYE_DIAG": "signal_ok"
+          }
+        },
+        "H_CASE_JAM": {
+          "label": "Case jammed on the infeed before the pick position",
+          "component": "conveyor.infeed_guides",
+          "predictions": {
+            "T_CONVEYOR_DRIVE": "running_high_load",
+            "T_UPSTREAM_FLOW": "cases_arriving",
+            "T_CASE_TRACKING": "case_overdue_at_pick",
+            "T_PICK_EYE_DIAG": "signal_ok"
+          }
+        }
+      }
+    },
+    "place_permissive": {
+      "alarm_codes": [
+        "S-120",
+        "W-450"
+      ],
+      "description": "Place step blocked because a safety permissive at the pallet station is false.",
+      "hypotheses": {
+        "H_LC_OBSTRUCTED": {
+          "label": "Object partially obstructing light curtain LC2",
+          "component": "safety.light_curtain_lc2",
+          "predictions": {
+            "T_SAFETY_CIRCUIT": "ossd_off",
+            "T_LC_BEAM_DIAG": "partial_beams_blocked"
+          }
+        },
+        "H_LC_MISALIGNED": {
+          "label": "Light curtain LC2 emitter/receiver misaligned",
+          "component": "safety.light_curtain_lc2",
+          "predictions": {
+            "T_SAFETY_CIRCUIT": "ossd_off",
+            "T_LC_BEAM_DIAG": "all_beams_weak"
+          }
+        },
+        "H_SAFETY_RESET_PENDING": {
+          "label": "Light curtain clear but safety relay latched awaiting manual reset",
+          "component": "safety.relay_k20",
+          "predictions": {
+            "T_SAFETY_CIRCUIT": "ossd_on_relay_latched",
+            "T_LC_BEAM_DIAG": "beams_clear"
+          }
+        },
+        "H_LC_DEVICE_FAULT": {
+          "label": "Light curtain internal device fault",
+          "component": "safety.light_curtain_lc2",
+          "predictions": {
+            "T_SAFETY_CIRCUIT": "ossd_off",
+            "T_LC_BEAM_DIAG": "device_fault"
+          }
+        }
+      }
+    }
+  },
+  "tests": {
+    "T_GRIP_IO_CHECK": {
+      "name": "Gripper IO and valve coil check",
+      "family": "gripper_close",
+      "description": "Reads close command output Q4.0, valve Y4 coil current, and open/closed feedback inputs I2.0/I2.1.",
+      "outcomes": [
+        "coil_energized",
+        "coil_not_energized"
+      ],
+      "duration_s": 2,
+      "read_only": true,
+      "reliability": 0.95
+    },
+    "T_AIR_PRESSURE": {
+      "name": "Gripper manifold air pressure",
+      "family": "gripper_close",
+      "description": "Reads the analog pressure transducer at the gripper valve manifold. Minimum for rated close time is 5.5 bar.",
+      "outcomes": [
+        "pressure_normal",
+        "pressure_low"
+      ],
+      "duration_s": 2,
+      "read_only": true,
+      "reliability": 0.95
+    },
+    "T_GRIP_SENSOR_DIAG": {
+      "name": "Closed-position sensor IO-Link diagnostics",
+      "family": "gripper_close",
+      "description": "Reads measured target distance and device status from the IO-Link inductive sensor B21 (switching distance 2.0 mm).",
+      "outcomes": [
+        "target_in_range",
+        "target_beyond_switch_point",
+        "target_absent",
+        "no_communication"
+      ],
+      "duration_s": 3,
+      "read_only": true,
+      "reliability": 0.92
+    },
+    "T_GRIP_MANUAL_CYCLE": {
+      "name": "Gripper open/close cycle in maintenance mode",
+      "family": "gripper_close",
+      "description": "Commands one open/close cycle and times the feedback transitions. Moves equipment.",
+      "outcomes": [
+        "normal",
+        "closes_slow",
+        "no_closed_feedback",
+        "no_motion"
+      ],
+      "duration_s": 8,
+      "read_only": false,
+      "reliability": 0.85
+    },
+    "T_CONVEYOR_DRIVE": {
+      "name": "Infeed conveyor drive status",
+      "family": "case_missing",
+      "description": "Reads the infeed VFD run status, speed feedback, and motor load.",
+      "outcomes": [
+        "running_normal_load",
+        "running_high_load",
+        "not_running"
+      ],
+      "duration_s": 2,
+      "read_only": true,
+      "reliability": 0.9
+    },
+    "T_UPSTREAM_FLOW": {
+      "name": "Upstream case flow",
+      "family": "case_missing",
+      "description": "Counts cases seen by the infeed entry sensor B10 over the last 5 minutes.",
+      "outcomes": [
+        "cases_arriving",
+        "no_cases"
+      ],
+      "duration_s": 2,
+      "read_only": true,
+      "reliability": 0.9
+    },
+    "T_CASE_TRACKING": {
+      "name": "Case tracking between infeed entry and pick",
+      "family": "case_missing",
+      "description": "Compares the last case entry time with the expected 9 s transit time to the pick position.",
+      "outcomes": [
+        "case_overdue_at_pick",
+        "no_case_in_transit"
+      ],
+      "duration_s": 2,
+      "read_only": true,
+      "reliability": 0.85
+    },
+    "T_PICK_EYE_DIAG": {
+      "name": "Pick photo-eye signal diagnostics",
+      "family": "case_missing",
+      "description": "Reads received-light margin and contamination flag from photo-eye B12 over IO-Link.",
+      "outcomes": [
+        "signal_ok",
+        "signal_low"
+      ],
+      "duration_s": 3,
+      "read_only": true,
+      "reliability": 0.9
+    },
+    "T_SAFETY_CIRCUIT": {
+      "name": "Safety circuit status (read-only)",
+      "family": "place_permissive",
+      "description": "Reads LC2 OSSD outputs and safety relay K20 channel and latch state. Does not reset anything.",
+      "outcomes": [
+        "ossd_off",
+        "ossd_on_relay_latched",
+        "circuit_ok"
+      ],
+      "duration_s": 2,
+      "read_only": true,
+      "reliability": 0.95
+    },
+    "T_LC_BEAM_DIAG": {
+      "name": "Light curtain beam diagnostics",
+      "family": "place_permissive",
+      "description": "Reads per-beam signal strength and device fault code from LC2 diagnostics.",
+      "outcomes": [
+        "partial_beams_blocked",
+        "all_beams_weak",
+        "beams_clear",
+        "device_fault"
+      ],
+      "duration_s": 3,
+      "read_only": true,
+      "reliability": 0.92
+    }
+  },
+  "prohibited_actions": {
+    "restart_cell": "Restarting the cell can move the robot and conveyor with personnel nearby. Only an authorized operator may restart after the cause is cleared.",
+    "reset_alarm": "Alarm acknowledgement and reset is performed by an authorized operator at the HMI after the cause is cleared.",
+    "reset_safety_circuit": "Safety circuits are reset only locally by an authorized person after physically verifying the zone is clear.",
+    "bypass_interlock": "Interlocks and safety devices must never be bypassed or muted by software.",
+    "force_output": "Forcing PLC outputs is prohibited outside a supervised maintenance procedure.",
+    "move_robot": "Robot motion commands are outside ARIA's permitted tool set.",
+    "change_parameter": "Changing timeouts or machine parameters requires engineering change approval."
+  }
+}

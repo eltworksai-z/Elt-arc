@@ -1,0 +1,170 @@
+{
+  "simulated": true,
+  "note": "Simulated maintenance history for the hackathon palletizer cells. Offsets are days relative to the time the database is seeded.",
+  "incidents": [
+    {
+      "id": "INC-2025-118",
+      "machine_id": "PAL-01",
+      "offset_days": -410,
+      "title": "Gripper close timeout after finger replacement",
+      "alarm_code": "A-301",
+      "component": "gripper.closed_sensor",
+      "root_cause": "Closed-position sensor B21 knocked out of alignment during gripper finger replacement.",
+      "events": [
+        {"t_min": 0, "event_type": "maintenance", "component": "gripper.jaws", "value": "Gripper finger set replaced (PM work order WO-3120)", "technician_action": "Replaced finger set", "outcome": "completed"},
+        {"t_min": 95, "event_type": "alarm", "component": "gripper", "signal": "A-301", "value": "Gripper close not confirmed"},
+        {"t_min": 97, "event_type": "signal_change", "component": "gripper.closed_sensor", "signal": "grip.closed_fb", "value": "false while close_cmd true"},
+        {"t_min": 110, "event_type": "diagnostic_test", "component": "gripper.closed_sensor", "signal": "B21 distance", "value": "3.1 mm (switching 2.0 mm)"},
+        {"t_min": 125, "event_type": "repair", "component": "gripper.closed_sensor", "value": "Sensor B21 realigned to 1.0 mm gap", "technician_action": "Realigned B21 and torqued bracket", "outcome": "fixed"},
+        {"t_min": 130, "event_type": "result", "component": "gripper", "value": "20 test cycles OK, cell returned to production", "outcome": "resolved"}
+      ],
+      "narrative": "On PAL-01 the gripper finger set was replaced during preventive maintenance in the morning. About 95 minutes later the cell stopped with A-301 gripper close not confirmed. The close command was on but closed feedback B21 stayed off. IO-Link diagnostics showed the target at 3.1 mm while the switching distance is 2.0 mm. The technician realigned B21 to a 1.0 mm gap and the cell ran 20 cycles without fault. At that time B21 was mounted on the standard slotted bracket, which can shift when the fingers are changed."
+    },
+    {
+      "id": "INC-2025-164",
+      "machine_id": "PAL-02",
+      "offset_days": -300,
+      "title": "Gripper valve coil failure",
+      "alarm_code": "A-301",
+      "component": "gripper.valve_y4",
+      "root_cause": "Solenoid coil of valve Y4 open circuit.",
+      "events": [
+        {"t_min": 0, "event_type": "alarm", "component": "gripper", "signal": "A-301", "value": "Gripper close not confirmed"},
+        {"t_min": 6, "event_type": "diagnostic_test", "component": "gripper.valve_y4", "signal": "Y4 coil current", "value": "0 mA with Q4.0 on"},
+        {"t_min": 30, "event_type": "repair", "component": "gripper.valve_y4", "value": "Valve Y4 replaced", "technician_action": "Replaced valve and coil", "outcome": "fixed"},
+        {"t_min": 35, "event_type": "result", "component": "gripper", "value": "Cell restarted, no recurrence", "outcome": "resolved"}
+      ],
+      "narrative": "PAL-02 stopped with A-301. Output Q4.0 was on but the Y4 coil drew 0 mA, so the gripper never moved and the open sensor stayed on. The coil was open circuit. The valve was replaced and the cell restarted without recurrence."
+    },
+    {
+      "id": "INC-2026-021",
+      "machine_id": "PAL-01",
+      "offset_days": -240,
+      "title": "Case not detected - dusty photo-eye",
+      "alarm_code": "A-210",
+      "component": "sensor.pick_photo_eye_b12",
+      "root_cause": "Cardboard dust on photo-eye B12 lens.",
+      "events": [
+        {"t_min": 0, "event_type": "alarm", "component": "conveyor.infeed", "signal": "A-210", "value": "Case not detected at pick"},
+        {"t_min": 4, "event_type": "diagnostic_test", "component": "sensor.pick_photo_eye_b12", "signal": "visual", "value": "Cases visible at pick, B12 off"},
+        {"t_min": 9, "event_type": "repair", "component": "sensor.pick_photo_eye_b12", "value": "Lens and reflector cleaned", "technician_action": "Cleaned lens", "outcome": "fixed"},
+        {"t_min": 10, "event_type": "result", "component": "conveyor.infeed", "value": "Detection restored", "outcome": "resolved"}
+      ],
+      "narrative": "PAL-01 stopped with A-210 case not detected at pick even though cases were visibly at the pick stop. The B12 photo-eye lens was coated with cardboard dust from the case erector. Cleaning the lens and reflector restored detection. Maintenance recommended adding B12 lens cleaning to the weekly PM. B12 at that time was a WL12 photo-eye without IO-Link diagnostics."
+    },
+    {
+      "id": "INC-2026-044",
+      "machine_id": "PAL-01",
+      "offset_days": -200,
+      "title": "Slow gripper close after compressor work",
+      "alarm_code": "A-301",
+      "component": "pneumatics.air_supply",
+      "root_cause": "Plant air header at 4.3 bar after compressor C2 maintenance.",
+      "events": [
+        {"t_min": 0, "event_type": "maintenance", "component": "pneumatics.compressor_c2", "value": "Compressor C2 service", "technician_action": "Utilities team serviced C2", "outcome": "completed"},
+        {"t_min": 140, "event_type": "alarm", "component": "gripper", "signal": "A-301", "value": "Gripper close not confirmed"},
+        {"t_min": 150, "event_type": "alarm", "component": "gripper", "signal": "A-301", "value": "Repeat after operator restart"},
+        {"t_min": 160, "event_type": "diagnostic_test", "component": "pneumatics.air_supply", "signal": "manifold pressure", "value": "4.3 bar (min 5.5 bar)"},
+        {"t_min": 190, "event_type": "repair", "component": "pneumatics.compressor_c2", "value": "C2 unloader valve reset by utilities", "technician_action": "Restored header pressure to 6.3 bar", "outcome": "fixed"},
+        {"t_min": 195, "event_type": "result", "component": "gripper", "value": "Close time back to 0.7 s", "outcome": "resolved"}
+      ],
+      "narrative": "After compressor C2 maintenance the PAL-01 gripper closed slowly. A-301 repeated after the operator restarted the cell. The closed feedback eventually came on, but after about 2.3 s, beyond the 1.5 s window. Manifold pressure was 4.3 bar against a 5.5 bar minimum. The main pressure switch did not trip because its threshold is 4.0 bar. Utilities reset the C2 unloader valve and header pressure recovered to 6.3 bar."
+    },
+    {
+      "id": "INC-2026-067",
+      "machine_id": "PAL-01",
+      "offset_days": -160,
+      "title": "Place blocked - stretch film in light curtain",
+      "alarm_code": "S-120",
+      "component": "safety.light_curtain_lc2",
+      "root_cause": "Loose stretch film tail hanging into LC2 beams at the pallet exit.",
+      "events": [
+        {"t_min": 0, "event_type": "alarm", "component": "safety.light_curtain_lc2", "signal": "S-120", "value": "LC2 interrupted"},
+        {"t_min": 1, "event_type": "alarm", "component": "sequence", "signal": "W-450", "value": "Waiting at step 40 PLACE"},
+        {"t_min": 8, "event_type": "diagnostic_test", "component": "safety.light_curtain_lc2", "signal": "beam diagnostics", "value": "Beams 6-8 interrupted, others strong"},
+        {"t_min": 15, "event_type": "repair", "component": "safety.light_curtain_lc2", "value": "Film tail removed from zone", "technician_action": "Zone inspected under lockout, film removed, local safety reset", "outcome": "fixed"},
+        {"t_min": 16, "event_type": "result", "component": "safety", "value": "LC2 clear, K20 reset by authorized operator", "outcome": "resolved"}
+      ],
+      "narrative": "PAL-01 held at step 40 PLACE with S-120 light curtain LC2 interrupted. Beam diagnostics showed beams 6 to 8 interrupted while the others were strong. A loose stretch film tail from the wrapper was hanging into the beams. An authorized operator inspected the zone under lockout, removed the film and performed the local safety reset."
+    },
+    {
+      "id": "INC-2026-090",
+      "machine_id": "PAL-01",
+      "offset_days": -120,
+      "title": "Cell starved - upstream case erector stopped",
+      "alarm_code": "A-210",
+      "component": "line.upstream",
+      "root_cause": "Upstream case erector out of glue; no cases arriving.",
+      "events": [
+        {"t_min": 0, "event_type": "alarm", "component": "conveyor.infeed", "signal": "A-210", "value": "Case not detected at pick"},
+        {"t_min": 3, "event_type": "diagnostic_test", "component": "line.upstream", "signal": "B10 entry count", "value": "0 cases in 5 min"},
+        {"t_min": 20, "event_type": "result", "component": "line.upstream", "value": "Case erector glue refilled upstream; cell recovered without intervention", "outcome": "resolved"}
+      ],
+      "narrative": "A-210 on PAL-01 was caused by starvation. The infeed entry sensor B10 counted zero cases in five minutes because the upstream case erector ran out of glue. No fault was found in the palletizer."
+    },
+    {
+      "id": "INC-2026-112",
+      "machine_id": "PAL-01",
+      "offset_days": -75,
+      "title": "Repeat B21 misalignment - keyed bracket ordered",
+      "alarm_code": "A-301",
+      "component": "gripper.closed_sensor",
+      "root_cause": "B21 shifted again during finger replacement; slotted bracket allowed movement.",
+      "events": [
+        {"t_min": 0, "event_type": "maintenance", "component": "gripper.jaws", "value": "Gripper finger set replaced (WO-4012)", "technician_action": "Replaced finger set", "outcome": "completed"},
+        {"t_min": 60, "event_type": "alarm", "component": "gripper", "signal": "A-301", "value": "Gripper close not confirmed"},
+        {"t_min": 70, "event_type": "diagnostic_test", "component": "gripper.closed_sensor", "signal": "B21 distance", "value": "2.8 mm (switching 2.0 mm)"},
+        {"t_min": 95, "event_type": "repair", "component": "gripper.closed_sensor", "value": "B21 realigned to 1.0 mm; keyed bracket 4471-KB ordered", "technician_action": "Realigned B21, raised purchase request for keyed bracket", "outcome": "fixed"},
+        {"t_min": 100, "event_type": "result", "component": "gripper", "value": "Resolved", "outcome": "resolved"}
+      ],
+      "narrative": "The same A-301 pattern recurred on PAL-01 one hour after another finger replacement. B21 read 2.8 mm. B21 was realigned to 1.0 mm. Because this was the second occurrence, keyed bracket 4471-KB was ordered to stop B21 shifting during finger changes; until it is fitted B21 remains on the slotted bracket. The finger replacement procedure was updated to require a B21 distance check after the work."
+    },
+    {
+      "id": "INC-2026-140",
+      "machine_id": "PAL-01",
+      "offset_days": -30,
+      "title": "B12 photo-eye upgraded to IO-Link model",
+      "alarm_code": "A-210",
+      "component": "sensor.pick_photo_eye_b12",
+      "root_cause": "Intermittent detection from contaminated WL12 lens; sensor upgraded.",
+      "events": [
+        {"t_min": 0, "event_type": "alarm", "component": "conveyor.infeed", "signal": "A-210", "value": "Case not detected at pick"},
+        {"t_min": 5, "event_type": "repair", "component": "sensor.pick_photo_eye_b12", "value": "B12 replaced with WL12G-IOL (IO-Link, contamination warning)", "technician_action": "Replaced sensor", "outcome": "fixed"},
+        {"t_min": 6, "event_type": "result", "component": "sensor.pick_photo_eye_b12", "value": "Received-light margin 170%", "outcome": "resolved"}
+      ],
+      "narrative": "After another dust-related A-210, photo-eye B12 on PAL-01 was replaced. The old WL12 was replaced with a WL12G-IOL that reports received-light margin and a contamination warning over IO-Link. The margin after installation was 170 percent. A margin below 60 percent indicates the lens needs cleaning."
+    },
+    {
+      "id": "INC-2026-151",
+      "machine_id": "PAL-02",
+      "offset_days": -12,
+      "title": "LC2 misaligned after forklift contact",
+      "alarm_code": "S-120",
+      "component": "safety.light_curtain_lc2",
+      "root_cause": "Receiver column knocked by forklift; all beams weak.",
+      "events": [
+        {"t_min": 0, "event_type": "alarm", "component": "safety.light_curtain_lc2", "signal": "S-120", "value": "LC2 interrupted"},
+        {"t_min": 10, "event_type": "diagnostic_test", "component": "safety.light_curtain_lc2", "signal": "beam diagnostics", "value": "All 24 beams weak"},
+        {"t_min": 60, "event_type": "repair", "component": "safety.light_curtain_lc2", "value": "Receiver realigned and post anchored", "technician_action": "Realigned LC2, safety function test performed", "outcome": "fixed"},
+        {"t_min": 70, "event_type": "result", "component": "safety", "value": "Safety validation signed off", "outcome": "resolved"}
+      ],
+      "narrative": "On PAL-02 a forklift contacted the LC2 receiver post. All 24 beams showed weak signal, a misalignment pattern rather than a partial obstruction. The receiver was realigned, the post was anchored, and a safety function test was signed off before restart."
+    },
+    {
+      "id": "INC-2026-158",
+      "machine_id": "PAL-01",
+      "offset_days": -5,
+      "title": "Intermittent B21 feedback - loose connector",
+      "alarm_code": "A-301",
+      "component": "gripper.closed_sensor_cable",
+      "root_cause": "B21 M8 connector loose at the gripper.",
+      "events": [
+        {"t_min": 0, "event_type": "alarm", "component": "gripper", "signal": "A-301", "value": "Gripper close not confirmed (intermittent)"},
+        {"t_min": 12, "event_type": "diagnostic_test", "component": "gripper.closed_sensor", "signal": "IO-Link status", "value": "Communication drop-outs"},
+        {"t_min": 20, "event_type": "repair", "component": "gripper.closed_sensor_cable", "value": "M8 connector reseated and secured", "technician_action": "Reseated connector", "outcome": "fixed"},
+        {"t_min": 21, "event_type": "result", "component": "gripper", "value": "No further drop-outs", "outcome": "resolved"}
+      ],
+      "narrative": "PAL-01 had intermittent A-301 alarms. IO-Link diagnostics for B21 showed communication drop-outs rather than a distance problem. The M8 connector at the gripper was loose; it was reseated and secured and no further drop-outs occurred."
+    }
+  ]
+}

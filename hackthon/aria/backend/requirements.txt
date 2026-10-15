@@ -1,0 +1,10 @@
+fastapi>=0.143
+uvicorn[standard]>=0.54
+pydantic>=2.14
+pydantic-settings>=2.10
+openai[realtime]>=3.31
+openai-agents>=0.24
+pypdf>=6.20
+numpy>=2.5
+websockets>=16.1
+python-multipart>=0.0.20

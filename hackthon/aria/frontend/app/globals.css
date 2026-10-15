@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, monospace;
+
+  --color-canvas: #faf9f7;
+  --color-surface: #ffffff;
+  --color-sunken: #f3f1ed;
+  --color-line: #e7e4de;
+  --color-ink: #1f1e1c;
+  --color-muted: #6f6b64;
+  --color-faint: #a19c93;
+
+  --color-accent: #d96a3b;
+  --color-accent-soft: #fbeee7;
+  --color-ok: #2f7d5b;
+  --color-ok-soft: #e6f3ec;
+  --color-warn: #b7791f;
+  --color-warn-soft: #fbf3e2;
+  --color-bad: #c2413b;
+  --color-bad-soft: #fbeaea;
+  --color-info: #3a6ea5;
+  --color-info-soft: #e9f0f8;
+
+  --color-caller: #138a7e;
+  --color-agent: #c2683f;
+  --color-overlap: #9a6a12;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.prose-aria p {
+  margin: 0.35rem 0;
+  line-height: 1.6;
+}
+.prose-aria ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0.35rem 0;
+}
+.prose-aria ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+  margin: 0.35rem 0;
+}
+.prose-aria h1 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.4rem;
+}
+.prose-aria h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0.9rem 0 0.3rem;
+}
+.prose-aria code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--color-sunken);
+  padding: 0.05rem 0.3rem;
+  border-radius: 0.3rem;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.8);
+  }
+}
+.pulse-dot {
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.shimmer-text {
+  background: linear-gradient(90deg, var(--color-muted) 30%, var(--color-ink) 50%, var(--color-muted) 70%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 2.2s linear infinite;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #dcd8d0;
+  border-radius: 8px;
+  border: 2px solid var(--color-canvas);
+}

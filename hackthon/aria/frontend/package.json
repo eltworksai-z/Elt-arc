@@ -1,0 +1,32 @@
+{
+  "name": "aria-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "clsx": "2.1.1",
+    "lucide-react": "1.57.0",
+    "next": "15.5.27",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.1.13",
+    "@types/node": "24.5.2",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "tailwindcss": "4.1.13",
+    "typescript": "5.9.3"
+  }
+}
